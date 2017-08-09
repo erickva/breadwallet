@@ -1,5 +1,5 @@
 //
-//  BCashSender.swift
+//  BCHSender.swift
 //  BreadWallet
 //
 //  Created by Adrian Corscadden on 2017-08-08.
@@ -13,9 +13,9 @@ typealias BRTxRef = UnsafeMutablePointer<BRCore.BRTransaction>
 
 private let apiClient = BRAPIClient()
 
-@objc class BCashSender : NSObject {
+@objc class BCHSender : NSObject {
 
-    func sendBCashTransaction(walletManager: BRWalletManager, address: String, feePerKb: UInt64, callback: @escaping (String?) -> Void) {
+    func sendBCHTransaction(walletManager: BRWalletManager, address: String, feePerKb: UInt64, callback: @escaping (String?) -> Void) {
         let genericError = "Something went wrong";
         guard let txData = walletManager.wallet?.bCashSweepTx(to: address, feePerKb: feePerKb)?.data else { assert(false, "No Tx Data"); return callback(genericError) }
         guard let txCount = walletManager.wallet?.allTransactions.count else { assert(false, "Could not get txCount"); return callback(genericError) }
@@ -37,9 +37,9 @@ private let apiClient = BRAPIClient()
         var seed: BRCore.UInt512 = seedData.withUnsafeBytes { $0.pointee }
         BRWalletSignTransaction(wallet, tx, 0x40, &seed, MemoryLayout<BRCore.UInt512>.stride)
 
-        apiClient.publishBCashTransaction(txData: Data(bytes: tx, count: MemoryLayout<BRCore.BRTransaction>.stride), callback: { errorMessage in
+        apiClient.publishBCHTransaction(txData: Data(bytes: tx, count: MemoryLayout<BRCore.BRTransaction>.stride), callback: { errorMessage in
             if errorMessage != nil {
-                UserDefaults.standard.set(tx.pointee.txHash.description, forKey: "BCashTxHashKey")
+                UserDefaults.standard.set(tx.pointee.txHash.description, forKey: "BCHTxHashKey")
             }
             callback(errorMessage)
         })
@@ -49,11 +49,11 @@ private let apiClient = BRAPIClient()
 }
 
 extension BRAPIClient {
-    func publishBCashTransaction(txData: Data, callback: @escaping (String?)->Void) {
+    func publishBCHTransaction(txData: Data, callback: @escaping (String?)->Void) {
         //TODO - update to /bch/publish-transaction
         var req = URLRequest(url: url("/bch/publish-transaction-test"))
         req.httpMethod = "POST"
-        req.setValue("application/bcashdata", forHTTPHeaderField: "Content-Type")
+        req.setValue("application/bchdata", forHTTPHeaderField: "Content-Type")
         req.httpBody = txData
         dataTaskWithRequest(req as URLRequest, authenticated: true, retryCount: 0) { (dat, resp, er) in
             if let statusCode = resp?.statusCode {

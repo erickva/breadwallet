@@ -154,8 +154,8 @@
 		BAE12BF21B2DEE7F00895CC5 /* TodayExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = BAE12BE51B2DEE7F00895CC5 /* TodayExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BAE12C061B2DEEF700895CC5 /* BRTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE12C051B2DEEF700895CC5 /* BRTodayViewController.m */; };
 		CE5EFDD41F392F36001A21C1 /* BRAdvancedSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD31F392F36001A21C1 /* BRAdvancedSettingsViewController.m */; };
-		CE5EFDD71F3935BF001A21C1 /* BRSendBCashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD61F3935BF001A21C1 /* BRSendBCashViewController.m */; };
-		CE5EFDDA1F3A87DC001A21C1 /* BCashSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD91F3A87DC001A21C1 /* BCashSender.swift */; };
+		CE5EFDD71F3935BF001A21C1 /* BRSendBCHViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD61F3935BF001A21C1 /* BRSendBCHViewController.m */; };
+		CE5EFDDA1F3A87DC001A21C1 /* BCHSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD91F3A87DC001A21C1 /* BCHSender.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -572,9 +572,9 @@
 		BAE12C051B2DEEF700895CC5 /* BRTodayViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRTodayViewController.m; sourceTree = "<group>"; };
 		CE5EFDD21F392F36001A21C1 /* BRAdvancedSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRAdvancedSettingsViewController.h; sourceTree = "<group>"; };
 		CE5EFDD31F392F36001A21C1 /* BRAdvancedSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRAdvancedSettingsViewController.m; sourceTree = "<group>"; };
-		CE5EFDD51F3935BF001A21C1 /* BRSendBCashViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRSendBCashViewController.h; sourceTree = "<group>"; };
-		CE5EFDD61F3935BF001A21C1 /* BRSendBCashViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRSendBCashViewController.m; sourceTree = "<group>"; };
-		CE5EFDD91F3A87DC001A21C1 /* BCashSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCashSender.swift; sourceTree = "<group>"; };
+		CE5EFDD51F3935BF001A21C1 /* BRSendBCHViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRSendBCHViewController.h; sourceTree = "<group>"; };
+		CE5EFDD61F3935BF001A21C1 /* BRSendBCHViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRSendBCHViewController.m; sourceTree = "<group>"; };
+		CE5EFDD91F3A87DC001A21C1 /* BCHSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCHSender.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -910,8 +910,8 @@
 				757C89511A2FCE420076B373 /* BRSettingsViewController.m */,
 				CE5EFDD21F392F36001A21C1 /* BRAdvancedSettingsViewController.h */,
 				CE5EFDD31F392F36001A21C1 /* BRAdvancedSettingsViewController.m */,
-				CE5EFDD51F3935BF001A21C1 /* BRSendBCashViewController.h */,
-				CE5EFDD61F3935BF001A21C1 /* BRSendBCashViewController.m */,
+				CE5EFDD51F3935BF001A21C1 /* BRSendBCHViewController.h */,
+				CE5EFDD61F3935BF001A21C1 /* BRSendBCHViewController.m */,
 				758DBD0C1980634900389E2A /* BRTxDetailViewController.h */,
 				758DBD0D1980634900389E2A /* BRTxDetailViewController.m */,
 				757BE7E4192C1FF70061CB20 /* BRWelcomeViewController.h */,
@@ -920,7 +920,7 @@
 				757BE7E2192C0E9D0061CB20 /* BRRestoreViewController.m */,
 				757BE7E7192D4E880061CB20 /* BRSeedViewController.h */,
 				757BE7E8192D4E880061CB20 /* BRSeedViewController.m */,
-				CE5EFDD91F3A87DC001A21C1 /* BCashSender.swift */,
+				CE5EFDD91F3A87DC001A21C1 /* BCHSender.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1443,7 +1443,7 @@
 				2292799A1C695CAE00C98E78 /* BRHTTPFileMiddleware.swift in Sources */,
 				BA7B53501BDA9A2800355E8D /* BRAppleWatchData.m in Sources */,
 				752E28AC19234AE300DB5A3C /* BRPeerEntity.m in Sources */,
-				CE5EFDDA1F3A87DC001A21C1 /* BCashSender.swift in Sources */,
+				CE5EFDDA1F3A87DC001A21C1 /* BCHSender.swift in Sources */,
 				752E28AD19234AE300DB5A3C /* BRTransactionEntity.m in Sources */,
 				752875061F393391002167CC /* BRPeerManager.c in Sources */,
 				752E28AE19234AE300DB5A3C /* BRTxInputEntity.m in Sources */,
@@ -1501,7 +1501,7 @@
 				22F7B6DA1D14A665007CC848 /* BRActivityView.swift in Sources */,
 				22B5F7841D665A0300657B77 /* BRKVStorePlugin.swift in Sources */,
 				757BE7E3192C0E9D0061CB20 /* BRRestoreViewController.m in Sources */,
-				CE5EFDD71F3935BF001A21C1 /* BRSendBCashViewController.m in Sources */,
+				CE5EFDD71F3935BF001A21C1 /* BRSendBCHViewController.m in Sources */,
 				757BE7E6192C1FF70061CB20 /* BRWelcomeViewController.m in Sources */,
 				757BE7E9192D4E880061CB20 /* BRSeedViewController.m in Sources */,
 				752E28E719234DA200DB5A3C /* NSData+Bitcoin.m in Sources */,

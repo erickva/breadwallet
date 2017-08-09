@@ -1,21 +1,21 @@
 //
-//  BRSendBCashViewController.m
+//  BRSendBCHViewController.m
 //  BreadWallet
 //
 //  Created by Adrian Corscadden on 2017-08-07.
 //  Copyright © 2017 Aaron Voisine. All rights reserved.
 //
 
-#import "BRSendBCashViewController.h"
+#import "BRSendBCHViewController.h"
 #import "BRScanViewController.h"
 #import "BRWalletManager.h"
 #import "BRWallet.h"
 #import "breadwallet-Swift.h"
 #import "BRPaymentRequest.h"
 
-NSString * const bCashTxHashKey = @"BCashTxHashKey";
+NSString * const BCHTxHashKey = @"BCHTxHashKey";
 
-@interface BRSendBCashViewController ()
+@interface BRSendBCHViewController ()
 
 @property (nonatomic, strong) UILabel *body;
 @property (nonatomic, strong) UIButton *scan;
@@ -27,7 +27,7 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
 
 @end
 
-@implementation BRSendBCashViewController 
+@implementation BRSendBCHViewController
 
 - (void)viewDidLoad
 {
@@ -116,7 +116,7 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
 
 - (void)setTxHashData
 {
-    NSString *txHash = [[NSUserDefaults standardUserDefaults] stringForKey:bCashTxHashKey];
+    NSString *txHash = [[NSUserDefaults standardUserDefaults] stringForKey:BCHTxHashKey];
     if (txHash) {
         [self.txHashButton setTitle:txHash forState:UIControlStateNormal];
         [self.txHashHeader setHidden:NO];
@@ -156,8 +156,8 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
 
 - (void)send
 {
-    BCashSender *sender = [[BCashSender alloc] init];
-    [sender sendBCashTransactionWithWalletManager:[BRWalletManager sharedInstance]
+    BCHSender *sender = [[BCHSender alloc] init];
+    [sender sendBCHTransactionWithWalletManager:[BRWalletManager sharedInstance]
                                           address:self.address
                                          feePerKb:MIN_FEE_PER_KB
                                          callback:^(NSString * _Nullable errorMessage) {
