@@ -155,6 +155,7 @@
 		BAE12C061B2DEEF700895CC5 /* BRTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BAE12C051B2DEEF700895CC5 /* BRTodayViewController.m */; };
 		CE5EFDD41F392F36001A21C1 /* BRAdvancedSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD31F392F36001A21C1 /* BRAdvancedSettingsViewController.m */; };
 		CE5EFDD71F3935BF001A21C1 /* BRSendBCashViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD61F3935BF001A21C1 /* BRSendBCashViewController.m */; };
+		CE5EFDDA1F3A87DC001A21C1 /* BCashSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE5EFDD91F3A87DC001A21C1 /* BCashSender.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -573,6 +574,7 @@
 		CE5EFDD31F392F36001A21C1 /* BRAdvancedSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRAdvancedSettingsViewController.m; sourceTree = "<group>"; };
 		CE5EFDD51F3935BF001A21C1 /* BRSendBCashViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRSendBCashViewController.h; sourceTree = "<group>"; };
 		CE5EFDD61F3935BF001A21C1 /* BRSendBCashViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRSendBCashViewController.m; sourceTree = "<group>"; };
+		CE5EFDD91F3A87DC001A21C1 /* BCashSender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BCashSender.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -918,6 +920,7 @@
 				757BE7E2192C0E9D0061CB20 /* BRRestoreViewController.m */,
 				757BE7E7192D4E880061CB20 /* BRSeedViewController.h */,
 				757BE7E8192D4E880061CB20 /* BRSeedViewController.m */,
+				CE5EFDD91F3A87DC001A21C1 /* BCashSender.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1440,6 +1443,7 @@
 				2292799A1C695CAE00C98E78 /* BRHTTPFileMiddleware.swift in Sources */,
 				BA7B53501BDA9A2800355E8D /* BRAppleWatchData.m in Sources */,
 				752E28AC19234AE300DB5A3C /* BRPeerEntity.m in Sources */,
+				CE5EFDDA1F3A87DC001A21C1 /* BCashSender.swift in Sources */,
 				752E28AD19234AE300DB5A3C /* BRTransactionEntity.m in Sources */,
 				752875061F393391002167CC /* BRPeerManager.c in Sources */,
 				752E28AE19234AE300DB5A3C /* BRTxInputEntity.m in Sources */,

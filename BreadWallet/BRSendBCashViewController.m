@@ -8,6 +8,9 @@
 
 #import "BRSendBCashViewController.h"
 #import "BRScanViewController.h"
+#import "BRWalletManager.h"
+#import "BRWallet.h"
+#import "breadwallet-Swift.h"
 
 NSString * const bCashTxHashKey = @"BCashTxHashKey";
 
@@ -134,8 +137,9 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
 
 - (void)sendToAddress:(NSString *)address
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Send" message:@"Send success" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
-    [alert show];
+    BCashSender *sender = [[BCashSender alloc] init];
+    NSDictionary *result = [sender createSignedBCashTransactionWithWalletManager:[BRWalletManager sharedInstance] address:address feePerKb:MIN_FEE_PER_KB];
+    NSLog(@"result: %@", result);
 }
 
 #pragma mark UIAlertViewDelegate
@@ -143,6 +147,11 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSLog(@"index: %ld", buttonIndex);
+    if (buttonIndex == 1) {
+
+
+
+    }
 }
 
 #pragma mark AutoLayout Helpers
