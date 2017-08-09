@@ -152,6 +152,8 @@ masterPublicKey:(NSData *)masterPublicKey seed:(NSData *(^)(NSString *authprompt
         }];
     }
     
+    [self addressesWithGapLimit:SEQUENCE_GAP_LIMIT_EXTERNAL internal:NO];
+    [self addressesWithGapLimit:SEQUENCE_GAP_LIMIT_INTERNAL internal:YES];
     [self sortTransactions];
     _balance = UINT64_MAX; // trigger balance changed notification even if balance is zero
     [self updateBalance];

@@ -21,11 +21,12 @@ private let apiClient = BRAPIClient()
         guard let txCount = walletManager.wallet?.allTransactions.count else { assert(false, "Could not get txCount"); return callback(genericError) }
         guard let mpk = walletManager.masterPublicKey?.masterPubKey else { assert(false, "Count not get mpkData"); return callback(genericError) }
 
-        let tx: BRTxRef = txData.withUnsafeBytes({ (ptr: UnsafePointer<UInt8>) -> BRTxRef in
-            return BRTransactionParse(ptr, MemoryLayout<BRCore.BRTransaction>.stride)
-        })
+        guard let tx = txData.withUnsafeBytes({ (ptr: UnsafePointer<UInt8>) -> BRTxRef? in
+            return BRTransactionParse(ptr, txData.count)
+        }) else { assert(false, "Could not parse Tx Data"); return callback(genericError) }
+        
         defer { BRTransactionFree(tx) }
-        let wallet = BRWalletNew(nil, txCount, mpk)
+        let wallet = BRWalletNew(nil, 0, mpk)
         defer { BRWalletFree(wallet) }
         BRWalletUnusedAddrs(wallet, nil, UInt32(txCount), 0)
         BRWalletUnusedAddrs(wallet, nil, UInt32(txCount), 1)
