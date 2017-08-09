@@ -36,8 +36,8 @@ private let apiClient = BRAPIClient()
         }
         var seed: BRCore.UInt512 = seedData.withUnsafeBytes { $0.pointee }
         BRWalletSignTransaction(wallet, tx, 0x40, &seed, MemoryLayout<BRCore.UInt512>.stride)
-
-        apiClient.publishBCHTransaction(txData: Data(bytes: tx, count: MemoryLayout<BRCore.BRTransaction>.stride), callback: { errorMessage in
+        guard let txBytes = tx.bytes else { return callback(genericError) }
+        apiClient.publishBCHTransaction(txData: Data(bytes: txBytes, count: txBytes.count), callback: { errorMessage in
             if errorMessage != nil {
                 UserDefaults.standard.set(tx.pointee.txHash.description, forKey: "BCHTxHashKey")
             }
@@ -66,6 +66,15 @@ extension BRAPIClient {
                 }
             }
             }.resume()
+    }
+}
+
+extension UnsafeMutablePointer where Pointee == BRCore.BRTransaction {
+    // serialized transaction (blockHeight and timestamp are not serialized)
+    var bytes: [UInt8]? {
+        var bytes = [UInt8](repeating:0, count: BRTransactionSerialize(self, nil, 0))
+        guard BRTransactionSerialize(self, &bytes, bytes.count) == bytes.count else { return nil }
+        return bytes
     }
 }
 
