@@ -11,12 +11,15 @@ import BRCore
 
 typealias BRTxRef = UnsafeMutablePointer<BRCore.BRTransaction>
 
+private let apiClient = BRAPIClient()
+
 @objc class BCashSender : NSObject {
 
-    func createSignedBCashTransaction(walletManager: BRWalletManager, address: String, feePerKb: UInt64) -> [String: Any]? {
-        guard let txData = walletManager.wallet?.bCashSweepTx(to: address, feePerKb: feePerKb)?.data else { assert(false, "No Tx Data"); return nil }
-        guard let txCount = walletManager.wallet?.allTransactions.count else { assert(false, "Could not get txCount"); return nil }
-        guard let mpk = walletManager.masterPublicKey?.masterPubKey else { assert(false, "Count not get mpkData"); return nil }
+    func sendBCashTransaction(walletManager: BRWalletManager, address: String, feePerKb: UInt64, callback: @escaping (String?) -> Void) {
+        let genericError = "Something went wrong";
+        guard let txData = walletManager.wallet?.bCashSweepTx(to: address, feePerKb: feePerKb)?.data else { assert(false, "No Tx Data"); return callback(genericError) }
+        guard let txCount = walletManager.wallet?.allTransactions.count else { assert(false, "Could not get txCount"); return callback(genericError) }
+        guard let mpk = walletManager.masterPublicKey?.masterPubKey else { assert(false, "Count not get mpkData"); return callback(genericError) }
 
         let tx: BRTxRef = txData.withUnsafeBytes({ (ptr: UnsafePointer<UInt8>) -> BRTxRef in
             return BRTransactionParse(ptr, MemoryLayout<BRCore.BRTransaction>.stride)
@@ -29,17 +32,41 @@ typealias BRTxRef = UnsafeMutablePointer<BRCore.BRTransaction>
 
         //TODO - use real amount here
         guard let seedData = walletManager.seed(withPrompt: "Authorize sending BCH Balance", forAmount: 0) else {
-            return nil
+            return callback(genericError)
         }
         var seed: BRCore.UInt512 = seedData.withUnsafeBytes { $0.pointee }
         BRWalletSignTransaction(wallet, tx, 0x40, &seed, MemoryLayout<BRCore.UInt512>.stride)
 
-        return [
-            "txHash" : tx.pointee.txHash.description,
-            "txData" : Data(bytes: tx, count: MemoryLayout<BRCore.BRTransaction>.stride)
-        ]
+        apiClient.publishBCashTransaction(txData: Data(bytes: tx, count: MemoryLayout<BRCore.BRTransaction>.stride), callback: { errorMessage in
+            if errorMessage != nil {
+                UserDefaults.standard.set(tx.pointee.txHash.description, forKey: "BCashTxHashKey")
+            }
+            callback(errorMessage)
+        })
+
     }
 
+}
+
+extension BRAPIClient {
+    func publishBCashTransaction(txData: Data, callback: @escaping (String?)->Void) {
+        //TODO - update to /bch/publish-transaction
+        var req = URLRequest(url: url("/bch/publish-transaction-test"))
+        req.httpMethod = "POST"
+        req.setValue("application/bcashdata", forHTTPHeaderField: "Content-Type")
+        req.httpBody = txData
+        dataTaskWithRequest(req as URLRequest, authenticated: true, retryCount: 0) { (dat, resp, er) in
+            if let statusCode = resp?.statusCode {
+                if statusCode >= 200 && statusCode < 300 {
+                    callback(nil)
+                } else if let error = er{
+                    callback(error.description)
+                } else {
+                    callback("\(statusCode)")
+                }
+            }
+            }.resume()
+    }
 }
 
 extension Data {

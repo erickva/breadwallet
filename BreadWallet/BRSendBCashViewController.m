@@ -157,9 +157,16 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
 - (void)send
 {
     BCashSender *sender = [[BCashSender alloc] init];
-    NSDictionary *result = [sender createSignedBCashTransactionWithWalletManager:[BRWalletManager sharedInstance] address:self.address feePerKb:MIN_FEE_PER_KB];
-    NSLog(@"result: %@", result);
-    //TODO - send serialized tx to network
+    [sender sendBCashTransactionWithWalletManager:[BRWalletManager sharedInstance]
+                                          address:self.address
+                                         feePerKb:MIN_FEE_PER_KB
+                                         callback:^(NSString * _Nullable errorMessage) {
+        if (errorMessage) {
+            NSLog(@"Error: %@", errorMessage);
+        } else {
+            NSLog(@"BCash Success");
+        }
+    }];
 }
 
 #pragma mark UIAlertViewDelegate
