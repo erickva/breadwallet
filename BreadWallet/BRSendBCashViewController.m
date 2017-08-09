@@ -11,6 +11,7 @@
 #import "BRWalletManager.h"
 #import "BRWallet.h"
 #import "breadwallet-Swift.h"
+#import "BRPaymentRequest.h"
 
 NSString * const bCashTxHashKey = @"BCashTxHashKey";
 
@@ -22,6 +23,7 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
 @property (nonatomic, strong) BRScanViewController *scanController;
 @property (nonatomic, strong) UILabel *txHashHeader;
 @property (nonatomic, strong) UIButton *txHashButton;
+@property (nonatomic, strong) NSString *address;
 
 @end
 
@@ -108,6 +110,7 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
     if (! self.scanController) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
         self.scanController = [storyboard instantiateViewControllerWithIdentifier:@"ScanViewController"];
+        self.scanController.delegate = self;
     }
 }
 
@@ -131,27 +134,74 @@ NSString * const bCashTxHashKey = @"BCashTxHashKey";
     NSString *str = [[UIPasteboard generalPasteboard].string
                      stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (str) {
-        [self sendToAddress:str];
+        self.address = str;
+        [self confirmSend];
+    } else {
+        [self showErrorMessage:@"No Address on Pasteboard"];
     }
 }
 
-- (void)sendToAddress:(NSString *)address
+- (void)confirmSend
+{
+    NSString *message = [NSString stringWithFormat:@"Would you like to send your entire BCH balance to %@", self.address];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Send BCH?" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    [alert show];
+}
+
+- (void)showErrorMessage:(NSString *)message
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+}
+
+- (void)send
 {
     BCashSender *sender = [[BCashSender alloc] init];
-    NSDictionary *result = [sender createSignedBCashTransactionWithWalletManager:[BRWalletManager sharedInstance] address:address feePerKb:MIN_FEE_PER_KB];
+    NSDictionary *result = [sender createSignedBCashTransactionWithWalletManager:[BRWalletManager sharedInstance] address:self.address feePerKb:MIN_FEE_PER_KB];
     NSLog(@"result: %@", result);
+    //TODO - send serialized tx to network
 }
 
 #pragma mark UIAlertViewDelegate
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-    NSLog(@"index: %ld", buttonIndex);
     if (buttonIndex == 1) {
-
-
-
+        [self send];
     }
+}
+
+// MARK: - AVCaptureMetadataOutputObjectsDelegate
+
+- (void)captureOutput:(AVCaptureOutput *)captureOutput didOutputMetadataObjects:(NSArray *)metadataObjects
+       fromConnection:(AVCaptureConnection *)connection
+{
+    for (AVMetadataMachineReadableCodeObject *codeObject in metadataObjects) {
+        if (! [codeObject.type isEqual:AVMetadataObjectTypeQRCode]) continue;
+        NSString *addr = [codeObject.stringValue stringByTrimmingCharactersInSet:
+                          [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        BRPaymentRequest *request = [BRPaymentRequest requestWithString:addr];
+        if ((request.isValid && [request.scheme isEqual:@"bitcoin"]) || [addr isValidBitcoinPrivateKey] ||
+                   [addr isValidBitcoinBIP38Key]) {
+            if (request.r.length == 0) {
+                self.scanController.cameraGuide.image = [UIImage imageNamed:@"cameraguide-green"];
+                [self.scanController stop];
+                [self.scanController dismissViewControllerAnimated:YES completion:^{
+                    [self resetQRGuide];
+                    self.address = request.paymentAddress;
+                    [self confirmSend];
+                }];
+            }
+        }
+        
+        break;
+    }
+}
+
+- (void)resetQRGuide
+{
+    self.scanController.message.text = nil;
+    self.scanController.cameraGuide.image = [UIImage imageNamed:@"cameraguide"];
 }
 
 #pragma mark AutoLayout Helpers
