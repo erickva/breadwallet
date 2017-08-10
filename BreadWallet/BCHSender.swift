@@ -52,7 +52,7 @@ private let apiClient = BRAPIClient()
 extension BRAPIClient {
     func publishBCHTransaction(txData: Data, callback: @escaping (String?)->Void) {
         //TODO - update to /bch/publish-transaction
-        var req = URLRequest(url: url("/bch/publish-transaction-test"))
+        var req = URLRequest(url: url("/bch/publish-transaction"))
         req.httpMethod = "POST"
         req.setValue("application/bchdata", forHTTPHeaderField: "Content-Type")
         req.httpBody = txData

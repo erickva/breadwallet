@@ -940,7 +940,7 @@ masterPublicKey:(NSData *)masterPublicKey seed:(NSData *(^)(NSString *authprompt
     BRWallet *w = [[BRWallet alloc] initWithContext:nil sequence:self.sequence masterPublicKey:self.masterPublicKey
                    seed:^NSData *(NSString *authprompt, uint64_t amount) { return nil; }];
     
-    for (BRTransaction *tx in self.transactions) {
+    for (BRTransaction *tx in self.transactions.reversedOrderedSet) {
         if (tx.blockHeight < BCASH_FORKHEIGHT) [w registerTransaction:tx];
     }
     
