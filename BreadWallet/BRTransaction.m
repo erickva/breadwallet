@@ -36,7 +36,7 @@
 
 @interface BRTransaction ()
 
-@property (nonatomic, strong) NSMutableArray *hashes, *indexes, *inScripts, *signatures, *sequences;
+@property (nonatomic, strong) NSMutableArray *hashes, *indexes, *inAmounts, *inScripts, *signatures, *sequences;
 @property (nonatomic, strong) NSMutableArray *amounts, *addresses, *outScripts;
 
 @end
@@ -55,6 +55,7 @@
     _version = TX_VERSION;
     self.hashes = [NSMutableArray array];
     self.indexes = [NSMutableArray array];
+    self.inAmounts = [NSMutableArray array];
     self.inScripts = [NSMutableArray array];
     self.amounts = [NSMutableArray array];
     self.addresses = [NSMutableArray array];
@@ -114,8 +115,8 @@
     return self;
 }
 
-- (instancetype)initWithInputHashes:(NSArray *)hashes inputIndexes:(NSArray *)indexes inputScripts:(NSArray *)scripts
-outputAddresses:(NSArray *)addresses outputAmounts:(NSArray *)amounts
+- (instancetype)initWithInputHashes:(NSArray *)hashes inputIndexes:(NSArray *)indexes inputAmounts:(NSArray *)inAmounts
+inputScripts:(NSArray *)scripts outputAddresses:(NSArray *)addresses outputAmounts:(NSArray *)amounts
 {
     if (hashes.count == 0 || hashes.count != indexes.count) return nil;
     if (scripts.count > 0 && hashes.count != scripts.count) return nil;
@@ -126,7 +127,8 @@ outputAddresses:(NSArray *)addresses outputAmounts:(NSArray *)amounts
     _version = TX_VERSION;
     self.hashes = [NSMutableArray arrayWithArray:hashes];
     self.indexes = [NSMutableArray arrayWithArray:indexes];
-
+    self.inAmounts = [NSMutableArray arrayWithArray:inAmounts];
+    
     if (scripts.count > 0) {
         self.inScripts = [NSMutableArray arrayWithArray:scripts];
     }
@@ -166,6 +168,11 @@ outputAddresses:(NSArray *)addresses outputAmounts:(NSArray *)amounts
 - (NSArray *)inputIndexes
 {
     return self.indexes;
+}
+
+- (NSArray *)inputAmounts
+{
+    return self.inAmounts;
 }
 
 - (NSArray *)inputScripts
@@ -240,9 +247,10 @@ outputAddresses:(NSArray *)addresses outputAmounts:(NSArray *)amounts
     return [self toDataWithSubscriptIndex:NSNotFound];
 }
 
-- (void)addInputHash:(UInt256)hash index:(NSUInteger)index script:(NSData *)script
+- (void)addInputHash:(UInt256)hash index:(NSUInteger)index amount:(uint64_t)amount script:(NSData *)script
 {
     [self addInputHash:hash index:index script:script signature:nil sequence:TXIN_SEQUENCE];
+    self.inAmounts[self.inAmounts.count - 1] = @(amount);
 }
 
 - (void)addInputHash:(UInt256)hash index:(NSUInteger)index script:(NSData *)script signature:(NSData *)signature
@@ -250,6 +258,7 @@ sequence:(uint32_t)sequence
 {
     [self.hashes addObject:uint256_obj(hash)];
     [self.indexes addObject:@(index)];
+    [self.inAmounts addObject:@(0)];
     [self.inScripts addObject:(script) ? script : [NSNull null]];
     [self.signatures addObject:(signature) ? signature : [NSNull null]];
     [self.sequences addObject:@(sequence)];
@@ -328,10 +337,11 @@ sequence:(uint32_t)sequence
             [d appendVarInt:[self.signatures[i] length]];
             [d appendData:self.signatures[i]];
         }
-        else if (subscriptIndex == i && self.inScripts[i] != [NSNull null]) {
+        else if ((subscriptIndex == i || subscriptIndex == NSNotFound) && self.inScripts[i] != [NSNull null]) {
             //TODO: to fully match the reference implementation, OP_CODESEPARATOR related checksig logic should go here
             [d appendVarInt:[self.inScripts[i] length]];
             [d appendData:self.inScripts[i]];
+            if (subscriptIndex == NSNotFound) [d appendUInt64:[self.inAmounts[i] unsignedLongLongValue]];
         }
         else [d appendVarInt:0];
         

@@ -1148,7 +1148,7 @@ completion:(void (^)(BRTransaction *tx, uint64_t fee, NSError *error))completion
             BRUTXO o;
 
             [output getValue:&o];
-            [tx addInputHash:o.hash index:o.n script:scripts[i]];
+            [tx addInputHash:o.hash index:o.n amount:[amounts[i] unsignedLongLongValue] script:scripts[i]];
             balance += [amounts[i++] unsignedLongLongValue];
         }
 

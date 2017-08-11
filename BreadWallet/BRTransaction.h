@@ -42,6 +42,7 @@ typedef union _UInt256 UInt256;
 @property (nonatomic, readonly) NSArray *inputAddresses;
 @property (nonatomic, readonly) NSArray *inputHashes;
 @property (nonatomic, readonly) NSArray *inputIndexes;
+@property (nonatomic, readonly) NSArray *inputAmounts;
 @property (nonatomic, readonly) NSArray *inputScripts;
 @property (nonatomic, readonly) NSArray *inputSignatures;
 @property (nonatomic, readonly) NSArray *inputSequences;
@@ -64,10 +65,10 @@ typedef union _UInt256 UInt256;
 + (instancetype)transactionWithMessage:(NSData *)message;
 
 - (instancetype)initWithMessage:(NSData *)message;
-- (instancetype)initWithInputHashes:(NSArray *)hashes inputIndexes:(NSArray *)indexes inputScripts:(NSArray *)scripts
-outputAddresses:(NSArray *)addresses outputAmounts:(NSArray *)amounts;
+- (instancetype)initWithInputHashes:(NSArray *)hashes inputIndexes:(NSArray *)indexes inputAmounts:(NSArray *)inAmounts
+inputScripts:(NSArray *)scripts outputAddresses:(NSArray *)addresses outputAmounts:(NSArray *)amounts;
 
-- (void)addInputHash:(UInt256)hash index:(NSUInteger)index script:(NSData *)script;
+- (void)addInputHash:(UInt256)hash index:(NSUInteger)index amount:(uint64_t)amount script:(NSData *)script;
 - (void)addInputHash:(UInt256)hash index:(NSUInteger)index script:(NSData *)script signature:(NSData *)signature
 sequence:(uint32_t)sequence;
 - (void)addOutputAddress:(NSString *)address amount:(uint64_t)amount;

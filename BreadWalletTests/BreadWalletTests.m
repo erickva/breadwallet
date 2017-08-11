@@ -655,8 +655,9 @@
 
     [script appendScriptPubKeyForAddress:k.address];
 
-    BRTransaction *tx = [[BRTransaction alloc] initWithInputHashes:@[hash] inputIndexes:@[@0] inputScripts:@[script]
-                         outputAddresses:@[k.address, k.address] outputAmounts:@[@100000000, @4900000000]];
+    BRTransaction *tx = [[BRTransaction alloc] initWithInputHashes:@[hash] inputIndexes:@[@0] inputAmounts:@[@0]
+                         inputScripts:@[script] outputAddresses:@[k.address, k.address]
+                         outputAmounts:@[@100000000, @4900000000]];
 
     [tx signWithPrivateKeys:@[k.privateKey]];
 
@@ -678,6 +679,7 @@
 
     tx = [[BRTransaction alloc] initWithInputHashes:@[hash, hash, hash, hash, hash, hash, hash, hash, hash, hash]
           inputIndexes:@[@0, @0,@0, @0, @0, @0, @0, @0, @0, @0]
+          inputAmounts:@[@0, @0,@0, @0, @0, @0, @0, @0, @0, @0]
           inputScripts:@[script, script, script, script, script, script, script, script, script, script]
           outputAddresses:@[k.address, k.address, k.address, k.address, k.address, k.address, k.address, k.address,
                             k.address, k.address]
@@ -1114,8 +1116,8 @@
 
     [script appendScriptPubKeyForAddress:k.address];
 
-    BRTransaction *tx = [[BRTransaction alloc] initWithInputHashes:@[hash] inputIndexes:@[@(0)] inputScripts:@[script]
-                         outputAddresses:@[w.receiveAddress] outputAmounts:@[@(SATOSHIS)]];
+    BRTransaction *tx = [[BRTransaction alloc] initWithInputHashes:@[hash] inputIndexes:@[@(0)] inputAmounts:@[@(0)]
+                         inputScripts:@[script] outputAddresses:@[w.receiveAddress] outputAmounts:@[@(SATOSHIS)]];
 
     [tx signWithPrivateKeys:@[k.privateKey]];
     [w registerTransaction:tx];

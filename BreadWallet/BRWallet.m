@@ -489,7 +489,8 @@ masterPublicKey:(NSData *)masterPublicKey seed:(NSData *(^)(NSString *authprompt
         [output getValue:&o];
         tx = self.allTx[uint256_obj(o.hash)];
         if (! tx) continue;
-        [transaction addInputHash:tx.txHash index:o.n script:tx.outputScripts[o.n]];
+        [transaction addInputHash:tx.txHash index:o.n amount:[tx.outputAmounts[o.n] unsignedLongLongValue]
+         script:tx.outputScripts[o.n]];
         
         if (transaction.size + 34 > TX_MAX_SIZE) { // transaction size-in-bytes too large
             NSUInteger txSize = 10 + self.utxos.count*148 + (scripts.count + 1)*34;
