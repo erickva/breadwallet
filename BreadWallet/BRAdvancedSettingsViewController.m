@@ -35,7 +35,7 @@
 - (UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"CellIdentifier"];
-    cell.textLabel.text = @"Withdraw BCH";
+    cell.textLabel.text = NSLocalizedString(@"Withdraw BCH", );
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.textLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:17.0];
     cell.textLabel.textColor = [UIColor colorWithRed:85.0/255.0 green:85.0/255.0 blue:85.0/255.0 alpha:1.0];
