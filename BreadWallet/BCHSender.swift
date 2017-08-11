@@ -20,6 +20,7 @@ private let apiClient = BRAPIClient()
         guard let txData = walletManager.wallet?.bCashSweepTx(to: address, feePerKb: feePerKb)?.data else { assert(false, "No Tx Data"); return callback(genericError) }
         guard let txCount = walletManager.wallet?.allTransactions.count else { assert(false, "Could not get txCount"); return callback(genericError) }
         guard let mpk = walletManager.masterPublicKey?.masterPubKey else { assert(false, "Count not get mpkData"); return callback(genericError) }
+        guard let balance = walletManager.wallet?.balance else { return callback(genericError) }
 
         guard let tx = txData.withUnsafeBytes({ (ptr: UnsafePointer<UInt8>) -> BRTxRef? in
             return BRTransactionParse(ptr, txData.count)
@@ -31,8 +32,8 @@ private let apiClient = BRAPIClient()
         BRWalletUnusedAddrs(wallet, nil, UInt32(txCount), 0)
         BRWalletUnusedAddrs(wallet, nil, UInt32(txCount), 1)
 
-        //TODO - use real amount here
-        guard let seedData = walletManager.seed(withPrompt: "Authorize sending BCH Balance", forAmount: 0) else {
+
+        guard let seedData = walletManager.seed(withPrompt: "Authorize sending BCH Balance", forAmount: balance) else {
             return callback(genericError)
         }
         var seed: BRCore.UInt512 = seedData.withUnsafeBytes { $0.pointee }
@@ -52,7 +53,6 @@ private let apiClient = BRAPIClient()
 
 extension BRAPIClient {
     func publishBCHTransaction(txData: Data, callback: @escaping (String?)->Void) {
-        //TODO - update to /bch/publish-transaction
         var req = URLRequest(url: url("/bch/publish-transaction"))
         req.httpMethod = "POST"
         req.setValue("application/bchdata", forHTTPHeaderField: "Content-Type")
