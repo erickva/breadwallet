@@ -37,7 +37,7 @@
 #import "NSManagedObject+Sugar.h"
 
 #if BITCOIN_TESTNET
-#error don't know bcash testnet fork height
+#define BCASH_FORKHEIGHT 1155744
 #else // mainnet
 #define BCASH_FORKHEIGHT 478559
 #endif

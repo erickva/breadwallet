@@ -61,8 +61,8 @@ extension BRAPIClient {
             if let statusCode = resp?.statusCode {
                 if statusCode >= 200 && statusCode < 300 {
                     callback(nil)
-                } else if let error = er{
-                    callback(error.description)
+                } else if let data = dat, let errorString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+                    callback(errorString as String)
                 } else {
                     callback("\(statusCode)")
                 }

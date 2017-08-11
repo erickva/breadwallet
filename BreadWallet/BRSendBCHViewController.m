@@ -12,6 +12,7 @@
 #import "BRWallet.h"
 #import "breadwallet-Swift.h"
 #import "BRPaymentRequest.h"
+#import "BRBubbleView.h"
 
 NSString * const BCHTxHashKey = @"BCHTxHashKey";
 
@@ -39,8 +40,8 @@ NSString * const BCHTxHashKey = @"BCHTxHashKey";
 - (void)addSubviews
 {
     self.body = [[UILabel alloc] init];
-    self.scan = [self buttonWithTitle:@"scan QR code" imageNamed:@"cameraguide-blue-small"];
-    self.paste = [self buttonWithTitle:@"pay address from clipboard" imageNamed:nil];
+    self.scan = [self buttonWithTitle:NSLocalizedString(@"scan QR code", nil) imageNamed:@"cameraguide-blue-small"];
+    self.paste = [self buttonWithTitle:NSLocalizedString(@"pay address from clipboard", nil) imageNamed:nil];
     self.txHashHeader = [[UILabel alloc] init];
     self.txHashButton = [UIButton buttonWithType:UIButtonTypeSystem];
     [self.view addSubview:self.body];
@@ -77,6 +78,7 @@ NSString * const BCHTxHashKey = @"BCHTxHashKey";
 
     [self constrain:@[
                       [self constraintFrom:self.txHashButton toView:self.view attribute:NSLayoutAttributeLeading constant:16.0],
+                      [self constraintFrom:self.txHashButton toView:self.view attribute:NSLayoutAttributeTrailing constant:-16.0],
                       [NSLayoutConstraint constraintWithItem:self.txHashButton attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.txHashHeader attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0.0]
                       ]];
 }
@@ -84,12 +86,12 @@ NSString * const BCHTxHashKey = @"BCHTxHashKey";
 - (void)setInitialData
 {
     self.view.backgroundColor = [UIColor clearColor];
-    self.navigationItem.title = @"Withdraw Bitcoin Cash";
+    self.navigationItem.title = NSLocalizedString(@"Withdraw Bitcoin Cash", nil);
 
     self.body.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:17.0];
     self.body.numberOfLines = 0;
     self.body.lineBreakMode = NSLineBreakByWordWrapping;
-    self.body.text = @"Use one of the options below to enter your destination address. All Bitcoin Cash in your wallet at the time of the fork will be sent.";
+    self.body.text = NSLocalizedString(@"Use one of the options below to enter your destination address. All Bitcoin Cash in your wallet at the time of the fork will be sent.", nil);
     self.body.translatesAutoresizingMaskIntoConstraints = NO;
 
     [self.scan setImageEdgeInsets:UIEdgeInsetsMake(0, -10.0, 0.0, 10.0)];
@@ -97,9 +99,10 @@ NSString * const BCHTxHashKey = @"BCHTxHashKey";
     [self.paste addTarget:self action:@selector(didTapPaste) forControlEvents:UIControlEventTouchUpInside];
 
     self.txHashHeader.translatesAutoresizingMaskIntoConstraints = NO;
-    self.txHashHeader.text = @"Bitcoin Cash Withraw Transaction ID";
+    self.txHashHeader.text = NSLocalizedString(@"Bitcoin Cash Withraw Transaction ID", nil);
     [self.txHashHeader setHidden:YES];
     self.txHashButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.txHashButton addTarget:self action:@selector(didTapTxHash) forControlEvents:UIControlEventTouchUpInside];
     [self setTxHashData];
 }
 
@@ -137,20 +140,38 @@ NSString * const BCHTxHashKey = @"BCHTxHashKey";
         self.address = str;
         [self confirmSend];
     } else {
-        [self showErrorMessage:@"No Address on Pasteboard"];
+        [self showErrorMessage:NSLocalizedString(@"No Address on Pasteboard", nil)];
+    }
+}
+
+- (void)didTapTxHash
+{
+    NSString *txHash = [[NSUserDefaults standardUserDefaults] stringForKey:BCHTxHashKey];
+    if (txHash) {
+        [[UIPasteboard generalPasteboard] setString:txHash];
+        [self.view addSubview:[[[BRBubbleView viewWithText:NSLocalizedString(@"copied", nil)
+                                                    center:CGPointMake(self.view.bounds.size.width/2.0, self.view.bounds.size.height/2.0 - 130.0)] popIn]
+                               popOutAfterDelay:2.0]];
     }
 }
 
 - (void)confirmSend
 {
-    NSString *message = [NSString stringWithFormat:@"Would you like to send your entire BCH balance to %@", self.address];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Send BCH?" message:message delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
+    NSString *message = [NSString stringWithFormat:NSLocalizedString(@"Would you like to send your entire BCH balance to %@", nil), self.address];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Send BCH?", nil) message:message delegate:self cancelButtonTitle:NSLocalizedString(@"Cancel", nil) otherButtonTitles:NSLocalizedString(@"OK", nil), nil];
     [alert show];
 }
 
 - (void)showErrorMessage:(NSString *)message
 {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:message delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil) message:message delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil];
+    [alert show];
+}
+
+- (void)showSuccess
+{
+    [self setTxHashData];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Success", nil) message:NSLocalizedString(@"Successfully sent BCH", nil) delegate:nil cancelButtonTitle:NSLocalizedString(@"OK", nil) otherButtonTitles:nil];
     [alert show];
 }
 
@@ -162,9 +183,9 @@ NSString * const BCHTxHashKey = @"BCHTxHashKey";
                                          feePerKb:MIN_FEE_PER_KB
                                          callback:^(NSString * _Nullable errorMessage) {
         if (errorMessage) {
-            NSLog(@"Error: %@", errorMessage);
+            [self showErrorMessage:errorMessage];
         } else {
-            NSLog(@"BCash Success");
+            [self showSuccess];
         }
     }];
 }
